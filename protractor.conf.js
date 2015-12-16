@@ -14,7 +14,7 @@ exports.config = {
     frameworkPath: require.resolve('protractor-cucumber-framework'),
 
     specs: [
-        'features/*.feature'
+        'test/features/*.feature'
     ],
 
     jasmineNodeOpts: {
@@ -22,7 +22,7 @@ exports.config = {
     },
 
     cucumberOpts: {
-        require: 'features/step_definitions/*.js',
+        require: 'test/features/step_definitions/*.js',
         format: 'pretty' // or summary
     }
 };
