@@ -1,13 +1,16 @@
 // features/support/world.js
 'use strict';
 
-function World() {
-    this.prop = "Hello from the World!";
+var zombie = require('zombie');
 
-    this.greetings = function(name, callback) {
-      console.log("\n----Hello " + name);
-      callback();
-    };
+function World() {
+
+	this.browser = new zombie();
+
+	this.visit = function(url, calback){
+		this.browser.visit(url, calback);
+	}
+
 }
 
 module.exports.World = World;

@@ -5,7 +5,13 @@ Feature: Test cucumber automation
   I want to automate e2e testing
   So that I can avoid regressions
 
-  Scenario: Visiting the website
-    Given I visit the home page
-    When I click the register button
-    Then The browser goes to the registration page
+  
+  Scenario: Altro test
+    Given I go on "file:///Users/Emanuele/Desktop/lavoro/test-automation/app/html/index.html"
+    Then I fill input "name" with value "Name value"
+    Then I fill text area "description" with value "Description value"
+    Then I choose "tre" from select box "mySelect"
+    Then I choose "due" from radio button list "myRadio"
+    Then I choose "uno&tre" from checkbox list "myCheck"
+    
+	    
