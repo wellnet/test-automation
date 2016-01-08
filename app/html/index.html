@@ -1,37 +1,62 @@
 <html>
-<head></head>
+<head>
+
+	<title>Prima pagina</title>
+
+</head>
 <body>
 
+	<!--
 	<div class="menuClass" id="menuId">
 		<div class="myDiv">
-			<button name="testBut" class="test-button" onClick="alert('BUTTON IN DIV');">Primo bottone prova</button>
+			<button name="testBut" class="test-button" onClick="alert('BUTTON IN DIV');">First test button</button>
 		</div>
 	</div>
-	<button id="test-button" onClick="alert('BUTTON OUT DIV');">Bottone prova</button> 
+	<button id="test-button" onClick="alert('BUTTON OUT DIV');">Second test button</button> 
+	-->
+	
+	<a id="test_link" href="second_pe.html">Google</a>
+	
 
-	<a href="https://www.google.it">Google</a>
+	<form data-test-label="myForm">
+		<label for="name-form" id="prova">Nome</label>
+		<input class="name-test" id="name-form" data-test-label="Nome" value="">
 
-	<form>
-		<input name="name">
+		<label for="name-form" id="prova">Cognome</label>
+		<input class="name-test" id="name-form" data-test-label="Cognome" value="">
 
-		<textarea name="description"></textarea>
+		<label for="name-form" id="prova">Citta</label>
+		<input class="name-test" id="name-form" data-test-label="Citta" value="">
 
-		<select name="mySelect">
-			<option value="1">uno</option>
-			<option value="2">due</option>
-			<option value="3">tre</option>
+		<label for="name-form" id="prova">Indirizzo</label>
+		<input class="name-test" id="name-form" data-test-label="Indirizzo" value="">
+
+		<label for="name-form">Description uno</label>
+		<textarea name="description" id="myTextarea" data-test-label="Description uno"></textarea>
+
+		<label for="name-form">Description due</label>
+		<textarea name="description" id="myTextarea" data-test-label="Description due"></textarea>
+
+		<label for="name-form">Description tre</label>
+		<textarea name="description" id="myTextarea" data-test-label="Description tre"></textarea>
+
+		<label for="Select Number"></label>
+		<select name="mySelect" data-test-label="Select Number">
+			<option value="1">one</option>
+			<option value="2">two</option>
+			<option value="3">three</option>
 		</select>
 
 		<div name="myRadio">
-			<input type="radio" name="uno"> uno
-			<input type="radio" name="due"> due
-			<input type="radio" name="tre"> tre
+			<input type="radio" name="one"> one
+			<input type="radio" name="two"> two
+			<input type="radio" name="three"> three
 		</div>
 
 		<div name="myCheck">
-			<input type="checkbox" name="uno"> uno
-			<input type="checkbox" name="due"> due
-			<input type="checkbox" name="tre"> tre
+			<input type="checkbox" name="one"> one
+			<input type="checkbox" name="two"> two
+			<input type="checkbox" name="three"> three
 		</div>
 	</form>
 
