@@ -24,8 +24,17 @@ module.exports = function() {
   */
   this.Given(/^I go on "([^"]*)"$/, function(url, callback){
     browser.get(url);
+
+    browser.driver.wait(function() {
+      return browser.getCurrentUrl().then(function (currentUrl) {
+                return currentUrl === url;
+            }); 
+    }, 10000, "ERROREEEE!!");
+
     callback();
   });
+
+/*---------------- FUNCTION USED TO CLICK ON ELEMENTS ELEMENTS -----------------------------*/
 
   /*
   ** Click on element with a given CSS selector
@@ -41,6 +50,16 @@ module.exports = function() {
     var selectedElement = element(by.css(elementSelector));
     selectedElement.click();
 
+
+    callback();
+  });
+
+
+  this.When(/^I click on the link "([^"]*)"$/, function(myText, callback){
+
+    var selectedElement = element(by.cssContainingText("a", myText));    
+    
+    selectedElement.click();
 
     callback();
   });
@@ -327,23 +346,16 @@ module.exports = function() {
   */
   this.When(/^I check the checkboxes "([^"]*)"$/, function(checkboxList, callback){
     var selectedElement;
-    var elements = checkboxList.split("&");
-
-    var EC = protractor.ExpectedConditions;
-    
+    var elements = checkboxList.split("&");    
 
     for(var i = 0 ; i < elements.length ; i++){
       selectedElement = element(by.xpath("//label[. = '" + elements[i] + "']"));
     
-      var isClickable = EC.elementToBeClickable(selectedElement);
-
-      browser.wait(isClickable, 20000);
-      browser.actions().mouseMove(selectedElement).click();
+      selectedElement.click();
     }
-    
+
     callback();
   });
-
 
 
 
@@ -353,21 +365,27 @@ module.exports = function() {
   ** Check if the url of this page is equal to myUrl
   */
   this.Then(/^The url of the page should be "([^"]*)"$/, function(myUrl, callback){
-    expect(browser.getCurrentUrl()).to.eventually.equal(myUrl).and.notify(callback);
+    expect(browser.getCurrentUrl()).to.eventually.equal(myUrl);
+
+    callback();
   });
 
   /*
   ** Check if the url of this page contains myString
   */
   this.Then(/^The url of the page contains "([^"]*)"$/, function(myString, callback){
-    expect(browser.getCurrentUrl()).to.eventually.have.string(myString).and.notify(callback);
+    expect(browser.getCurrentUrl()).to.eventually.have.string(myString);
+
+    callback();
   });
 
   /*
   ** Check if the title of this page contains is equal to myTitle
   */
   this.Then(/^The title of the page should be "([^"]*)"$/, function(myTitle, callback){
-    expect(browser.getTitle()).to.eventually.equal(myTitle).and.notify(callback);
+    expect(browser.getTitle()).to.eventually.equal(myTitle);
+
+    callback();
   });
 
 
@@ -377,18 +395,61 @@ module.exports = function() {
   this.Then(/^The text of the element with selector "([^"]*)" should be "([^"]*)"$/, function(elementSelector, myText, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getText()).to.eventually.equal(myText).and.notify(callback);    
+    expect(selectedElement.getText()).to.eventually.equal(myText);
+
+    callback();
 
   });
 
   /*
-  ** Check if a given text exists somewhere in the page
+  ** Check if a given text IS present in the page
   */
-  this.Then(/^The text "([^"]*)" exists in page$/, function(myText, callback){
+  this.Then(/^The text "([^"]*)" should be present$/, function(myText, callback){
 
     var selectedElement = element(by.xpath("//*[contains(., '" + myText + "')]"));
     
-    expect(selectedElement.isPresent()).to.eventually.equal(true, "This text is not present in page").and.notify(callback);    
+    expect(selectedElement.isPresent()).to.eventually.equal(true, "This text is not present in page");
+
+    callback();
+
+  });
+
+  /*
+  ** Check if a given text IS NOT present in the page
+  */
+  this.Then(/^The text "([^"]*)" should not be present$/, function(myText, callback){
+
+    var selectedElement = element(by.xpath("//*[contains(., '" + myText + "')]"));
+    
+    expect(selectedElement.isPresent()).to.eventually.equal(false, "This text is present in page");
+
+    callback();    
+
+  });
+
+  /*
+  ** Check if a given link does IS present in the page
+  */
+  this.Then(/^The link "([^"]*)" should be present$/, function(myText, callback){
+
+    var selectedElement = element(by.cssContainingText("a", myText));    
+    
+    expect(selectedElement.isPresent()).to.eventually.equal(true, "This link is not present in page");
+
+    callback();    
+
+  });
+
+  /*
+  ** Check if a given link does IS NOT present in the page
+  */
+  this.Then(/^The link "([^"]*)" should not be present$/, function(myText, callback){
+
+    var selectedElement = element(by.cssContainingText("a", myText));    
+    
+    expect(selectedElement.isPresent()).to.eventually.equal(false, "This link is present in page");
+
+    callback();
 
   });
 
@@ -398,7 +459,9 @@ module.exports = function() {
   this.Then(/The element with selector "([^"]*)" should be present/, function(elementSelector, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.isPresent()).to.eventually.equal(true, "Can't find the element with selector '" + elementSelector + "' that should be present").and.notify(callback);
+    expect(selectedElement.isPresent()).to.eventually.equal(true, "Can't find the element with selector '" + elementSelector + "' that should be present");
+
+    callback();
   });
 
   /*
@@ -407,7 +470,9 @@ module.exports = function() {
   this.Then(/The element with selector "([^"]*)" should not be present/, function(elementSelector, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.isPresent()).to.eventually.equal(false, "The element with selector '" + elementSelector + "' should not be present but appears").and.notify(callback);
+    expect(selectedElement.isPresent()).to.eventually.equal(false, "The element with selector '" + elementSelector + "' should not be present but appears");
+
+    callback();
   });
 
   /*
@@ -417,7 +482,9 @@ module.exports = function() {
     var selectedElements = element.all(by.css(elementSelector));
     var elementsFound = selectedElements.count();
 
-    expect(elementsFound).to.eventually.equal(parseInt(numElements), "Can't find exactly" + numElements + " elements with selector '" + elementSelector + "'").and.notify(callback);
+    expect(elementsFound).to.eventually.equal(parseInt(numElements), "Can't find exactly" + numElements + " elements with selector '" + elementSelector + "'");
+
+    callback();
   });
 
   /*
@@ -427,7 +494,9 @@ module.exports = function() {
     var selectedElements = element.all(by.css(elementSelector));
     var elementsFound = selectedElements.count();
 
-    expect(elementsFound).to.be.at.least(parseInt(numElements)).and.notify(callback);
+    expect(elementsFound).to.be.at.least(parseInt(numElements));
+
+    callback();
   });
 
   /*
@@ -436,13 +505,15 @@ module.exports = function() {
   this.Then(/^The img tag with selector "([^"]*)" contains the image "([^"]*)"$/, function(elementSelector, imageUrl, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("src")).to.eventually.equal(imageUrl).and.notify(callback);
+    expect(selectedElement.getAttribute("src")).to.eventually.equal(imageUrl);
+
+    callback();
   });
 
 
 //--------------------- TEST ---------------------//
 
-this.Then(/^I move to "([^"]*)"$/, function(newUrl, callback){
+  this.Then(/^I move to "([^"]*)"$/, function(newUrl, callback){
   //mi aspetto che l'url sia uguale
     browser.driver.wait(function() {
       return browser.getCurrentUrl().then(function (url) {
@@ -451,82 +522,7 @@ this.Then(/^I move to "([^"]*)"$/, function(newUrl, callback){
     }, 10000, "ERROREEEE!!");
 
     callback();
-});
-
-
-
-  this.Then(/Bonera landing fail/, function(){
-    //vado sulla pagina
-    //browser.driver.get("http://193.41.235.54/it/landing/11/2015/bmw-dinamica-ti-regala-chagall");
-
-    //mi accerto che esista il pulstante
-    var loginButtonExists = by.id('edit-submit');            
-    browser.driver.wait(function() {
-      return browser.driver.isElementPresent(loginButtonExists); 
-    }, 5000);
-
-    //trovo il pulsante e ci clicco sopra
-    var loginButton = element(by.id('edit-submit'));
-    browser.actions().mouseMove(loginButton).click();
-
-    //mi aspetto che l'url sia uguale
-    browser.driver.wait(function() {
-      return browser.getCurrentUrl().then(function (url) {
-                return url === "http://193.41.235.54/it/landing/11/2015/bmw-dinamica-ti-regala-chagall";
-            }); 
-    }, 10000, "ERROREEEE!!");
-
   });
 
-
-  this.Then(/Bonera landing success/, function(){
-    //vado sulla pagina
-    //browser.driver.get("http://193.41.235.54/it/landing/11/2015/bmw-dinamica-ti-regala-chagall");
-
-
-    function test(){
-      document.getElementById("edit-submitted-checkbox-1").checked;
-      document.getElementById("edit-submitted-giorno").value = "22-1-2016";
-    }
-
-    browser.executeScript(test);
-
-    browser.driver.wait(function(){}, 10000);
-
-    //mi accerto che esista il pulstante
-    var loginButtonExists = by.id('edit-submit');            
-    browser.driver.wait(function() {
-      return browser.driver.isElementPresent(loginButtonExists); 
-    }, 5000);
-
-    //trovo il pulsante e ci clicco sopra
-    var loginButton = element(by.id('edit-submit'));
-    browser.actions().mouseMove(loginButton).click();
-
-    //mi aspetto che l'url sia uguale
-    browser.driver.wait(function() {
-      return browser.getCurrentUrl().then(function (url) {
-                return url !== "http://193.41.235.54/it/landing/11/2015/bmw-dinamica-ti-regala-chagall";
-            }); 
-    }, 10000, "ERROREEEE!!");
-
-  });
-
-
-function waitForUrlToChangeTo(urlRegex) {
-    var currentUrl;
-
-    return browser.getCurrentUrl().then(function storeCurrentUrl(url) {
-            currentUrl = url;
-        }
-    ).then(function waitForUrlToChangeTo() {
-            return browser.wait(function waitForUrlToChangeTo() {
-                return browser.getCurrentUrl().then(function compareCurrentUrl(url) {
-                    return urlRegex.test(url);
-                });
-            });
-        }
-    );
-}
   
 };
