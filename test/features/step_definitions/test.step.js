@@ -24,28 +24,35 @@ module.exports = function() {
   */
   this.Given(/^I go on "([^"]*)"$/, function(url, callback){
     browser.get(url);
-
     callback();
   });
 
   /*
-  ** Click on element with a given selector
+  ** Click on element with a given CSS selector
   ** Ex. "#menu .button", "button[name="foo"]"
   */
   this.When(/^I click on the element with selector "([^"]*)"$/, function(elementSelector, callback){
-    var selectedElement = element(by.css(elementSelector));
 
+    var selectedElementExists = by.css(elementSelector);            
+    browser.driver.wait(function() {
+        return browser.driver.isElementPresent(selectedElementExists); 
+    }, 1000);
+    
+    var selectedElement = element(by.css(elementSelector));
     selectedElement.click();
+
 
     callback();
   });
 
-/*---------------- FUNCTION USED TO FILL FORM ELEMENTS -----------------------------*/
 
+/*---------------- FUNCTION USED TO INTERACT WITH FORM ELEMENTS -----------------------------*/
+
+  ///INPUT-----
   /*
   ** Fill an input identified by a CSS selector
   */
-  this.When(/^I fill input with selector "([^"]*)" with value "([^"]*)"$/, function(elementSelector, value, callback){
+  this.When(/^I fill the input with selector "([^"]*)" with value "([^"]*)"$/, function(elementSelector, value, callback){
     var selectedElement = element(by.css(elementSelector));
 
     selectedElement.clear().sendKeys(value);
@@ -53,6 +60,71 @@ module.exports = function() {
     callback();
   });
 
+  /*
+  ** Fill a input using a given label. 
+  */
+  this.When(/I fill the input with label "([^"]*)" with value "([^"]*)"/, function(labelName, value, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+
+    selectedElement.clear().sendKeys(value);
+
+    callback();
+
+  });
+
+  /*
+  ** Same as the previous but used for Scenario Outline
+  */
+  this.When(/^I fill the input (.*) with value (.*) using table$/, function(labelName, value, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+
+    selectedElement.clear().sendKeys(value);
+
+    callback();
+  });
+
+  /*
+  ** Check if the value of input, identified by a CSS selector, is equal to a given value
+  */
+  this.Then(/The value of input with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).and.notify(callback);
+
+  });
+
+  /*
+  ** Check if the value of input, identified by a label, is equal to a given value
+  */
+  this.Then(/The value of input with label "([^"]*)" should be "([^"]*)"/, function(labelName, value, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+
+    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).and.notify(callback);
+
+  });
+
+  /*
+  ** Check if the input, identified by a CSS selector, has a given class
+  */
+  this.Then(/The input with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+  });
+
+  /*
+  ** Check if the value of input, identified by a label, has a given class
+  */
+  this.Then(/The input with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+
+  });
+
+
+
+  ///TEXTAREA-----
   /*
   ** Fill a text area identified by a CSS selector
   */
@@ -65,40 +137,10 @@ module.exports = function() {
   });
 
   /*
-  ** Fill a input using a given label. 
-  ** IMPORTANT: the label must be equal to the field data-test-label of the input element.
-  ** Es.
-  ** <label>User Name</label>
-  ** <input data-test-label="User Name">
-  */
-  this.When(/^I fill the input "([^"]*)" with value "([^"]*)"$/, function(labelName, value, callback){
-    var selectedElement = element(by.css("input[data-test-label='" + labelName + "']"));
-
-    selectedElement.clear().sendKeys(value);
-
-    callback();
-  });
-
-  /*
-  ** Same as the previous but used for Scenario Outline
-  */
-  this.When(/^I fill the input (.*) with value (.*) using table$/, function(labelName, value, callback){
-    var selectedElement = element(by.css("input[data-test-label='" + labelName + "']"));
-
-    selectedElement.clear().sendKeys(value);
-
-    callback();
-  });
-
-  /*
   ** Fill a text area using a given label. 
-  ** IMPORTANT: the label must be equal to the field data-test-label of the text area.
-  ** Es.
-  ** <label>User Description</label>
-  ** <textarea data-test-label="User Description"></textarea>
   */
-  this.When(/^I fill the textarea "([^"]*)" with value "([^"]*)"$/, function(labelName, value, callback){
-    var selectedElement = element(by.css("textarea[data-test-label='" + labelName + "']"));
+  this.When(/^I fill the textarea with label "([^"]*)" with value "([^"]*)"$/, function(labelName, value, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
 
     selectedElement.clear().sendKeys(value);
 
@@ -109,7 +151,7 @@ module.exports = function() {
   ** Same as the previous but used for Scenario Outline
   */
   this.When(/^I fill the textarea (.*) with value (.*) using table$/, function(labelName, value, callback){
-    var selectedElement = element(by.css("textarea[data-test-label='" + labelName + "']"));
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
 
     selectedElement.clear().sendKeys(value);
 
@@ -117,14 +159,61 @@ module.exports = function() {
   });
 
   /*
+  ** Check if the text of textarea, identified by a CSS selector, is equal to a given value
+  */
+  this.Then(/The text of the textarea with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
+
+  });
+
+  /*
+  ** Check if the text of textarea, identified by a label, is equal to a given value
+  */
+  this.Then(/The text of the textarea with label "([^"]*)" should be "([^"]*)"/, function(labelName, value, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
+
+    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
+
+  });
+
+  /*
+  ** Check if the textarea, identified by a CSS selector, has a given class
+  */
+  this.Then(/The textarea with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+  });
+
+  /*
+  ** Check if the textarea, identified by a label, has a given class
+  */
+  this.Then(/The textarea with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+
+  });
+
+  ///SELECT BOX-----
+  /*
+  ** Choose an option from a select box using a CSS selector
+  */
+  this.When(/^I check "([^"]*)" from select box with selector "([^"]*)"$/, function(chosenElement, elementSelector, callback){
+    var selectedElement = element(by.cssContainingText(elementSelector + " option", chosenElement));    
+    
+    selectedElement.click();
+
+    callback();
+  });
+
+  /*
   ** Choose an option from a select box using a given label
-  ** IMPORTANT: the label must be equal to the field data-test-label of the select.
-  ** Es.
-  ** <label>Chose one</label>
-  ** <select data-test-label="Chose one"></select>
   */
-  this.When(/^I check "([^"]*)" from select box "([^"]*)"$/, function(chosenElement, selectName, callback){
-    var selectedElement = element(by.cssContainingText("select[data-test-label='" + selectName + "']" + ' option', chosenElement));
+  this.When(/^I check "([^"]*)" from select box with label "([^"]*)"$/, function(chosenElement, labelName, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select/option[. = '" + chosenElement + "']"));
     
     selectedElement.click();
 
@@ -132,43 +221,131 @@ module.exports = function() {
   });
 
   /*
-  ** Choose an option from a radio button list
+  ** Check if the value of the select, identified by a CSS selector, is equal to a given value
   */
-  this.When(/^I check "([^"]*)" from radio button list "([^"]*)"$/, function(chosenElement, containerName, callback){
-    var selectedElement = element(by.css("div[name='" + containerName + "']" + " input[name='" + chosenElement + "']", chosenElement));
+  this.Then(/^The value of the select with selector "([^"]*)" should be "([^"]*)"$/, function(elementSelector, value, callback){
+    var selectedElement = element(by.css(elementSelector + ' option:first-child'));
     
-    selectedElement.click();
-
-    callback();
+    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
   });
 
   /*
-  ** Choose an option from a checkbox list.
-  ** Use "&" as separator in chosenElements -> "element1&element2&element3"
+  ** Check if the value of the select, identified by a label, is equal to a given value
   */
-  this.When(/^I check "([^"]*)" from checkbox list "([^"]*)"$/, function(chosenElements, containerName, callback){
-    var selectedElement;
-    var elements = chosenElements.split("&");
+  this.Then(/^The value of the select with label "([^"]*)" should be "([^"]*)"$/, function(labelName, value, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select"));
+    
+    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
+  });
+
+  /*
+  ** Check if the select, identified by a label, contains some options. Use & as separator for the option list
+  */
+  this.Then(/^The select with label "([^"]*)" should have these options "([^"]*)"$/, function(labelName, optionsList, callback){
+    
+    var selectedElement
+    var elements = optionsList.split("&");
 
     for(var i = 0 ; i < elements.length ; i++){
-      selectedElement = element(by.css("div[name='" + containerName + "']" + " input[name='" + elements[i] + "']"));
+      selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select/option[text() = '" + elements[i] + "']"));
+      expect(selectedElement.isPresent()).to.eventually.equal(true, "'" + elements[i] + "' is not an option.");
+    }
     
-      selectedElement.click();
+  });
+
+  /*
+  ** Check if the select, identified by a CSS selector, has a given class
+  */
+  this.Then(/The select with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+  });
+
+  /*
+  ** Check if the select, identified by a label, has a given class
+  */
+  this.Then(/The select with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select"));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+
+  });
+
+  ///RADIO BUTTON-----
+  /*
+  ** Choose an option from a radio button list using a given label
+  */
+  this.When(/^I check the radio button with label "([^"]*)"$/, function(labelName, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']"));
+    
+    selectedElement.click();
+
+    callback();
+  });
+
+  /*
+  ** Check if the radio button with a given label is checked
+  */
+  this.Then(/^The radio button with label "([^"]*)" should be checked$/, function(labelName, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/preceding-sibling::input[1]"));
+
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal("true").and.notify(callback);
+  });
+
+  /*
+  ** Check if the radio button with a given label is NOT checked
+  */
+  this.Then(/^The radio button with label "([^"]*)" should not be checked$/, function(labelName, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/preceding-sibling::input[1]"));
+
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null).and.notify(callback);
+  });
+
+  /*
+  ** Check if the radio button with a given CSS selector is checked
+  */
+  this.Then(/^The radio button with selector "([^"]*)" should be checked$/, function(elementSelector, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal("true").and.notify(callback);
+  });
+
+  /*
+  ** Check if the radio button with a given CSS selector is NOT checked
+  */
+  this.Then(/^The radio button with selector "([^"]*)" should not be checked$/, function(elementSelector, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null).and.notify(callback);
+  });
+
+  ///CHECKBOXES-----
+  /*
+  ** Choose one or more options from a checkbox list. Use "&" as separator in chosenElements.
+  ** Es: "element1&element2&element3"
+  */
+  this.When(/^I check the checkboxes "([^"]*)"$/, function(checkboxList, callback){
+    var selectedElement;
+    var elements = checkboxList.split("&");
+
+    var EC = protractor.ExpectedConditions;
+    
+
+    for(var i = 0 ; i < elements.length ; i++){
+      selectedElement = element(by.xpath("//label[. = '" + elements[i] + "']"));
+    
+      var isClickable = EC.elementToBeClickable(selectedElement);
+
+      browser.wait(isClickable, 20000);
+      browser.actions().mouseMove(selectedElement).click();
     }
     
     callback();
   });
 
 
-  this.When(/I fill the form with selector "([^"]*)" using these data$/, function(elementSelector, table, callback){
-    var data = table.hashes();
 
-    for(let i = 0 ; i < data.length ; i++){
-
-    }
-
-    calback();
-  });
 
 /*---------------- FUNCTION USED TO CHECK IF TEXT OR ELEMENTS ARE PRESENT -----------------------------*/
 
@@ -184,7 +361,14 @@ module.exports = function() {
   */
   this.Then(/^The url of the page contains "([^"]*)"$/, function(myString, callback){
     expect(browser.getCurrentUrl()).to.eventually.have.string(myString).and.notify(callback);
-  })
+  });
+
+  /*
+  ** Check if the title of this page contains is equal to myTitle
+  */
+  this.Then(/^The title of the page should be "([^"]*)"$/, function(myTitle, callback){
+    expect(browser.getTitle()).to.eventually.equal(myTitle).and.notify(callback);
+  });
 
 
   /*
@@ -198,74 +382,15 @@ module.exports = function() {
   });
 
   /*
-  ** Check if the value of input identified by a CSS selector is equal to a given value
+  ** Check if a given text exists somewhere in the page
   */
-  this.Then(/The value of input with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
-    var selectedElement = element(by.css(elementSelector));
+  this.Then(/^The text "([^"]*)" exists in page$/, function(myText, callback){
 
-    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).and.notify(callback);
-
-  });
-
-  /*
-  ** Check if the text of textarea identified by a CSS selector is equal to a given value
-  */
-  this.Then(/The text of the textarea with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
-    var selectedElement = element(by.css(elementSelector));
-
-    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
-
-  });
-
-  /*
-  ** Check if the value of the select identified by a CSS selector is equal to a given value
-  */
-  this.Then(/^The value of the select with selector "([^"]*)" should be "([^"]*)"$/, function(elementSelector, value, callback){
-    var selectedElement = element(by.css(elementSelector + ' option:first-child'));
+    var selectedElement = element(by.xpath("//*[contains(., '" + myText + "')]"));
     
-    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
-  });
-
-  /*
-  ** Check if an input, identified by a label, contains a given value. 
-  ** IMPORTANT: the label must be equal to the field data-test-label of the input element.
-  ** Es.
-  ** <label>User Name</label>
-  ** <input data-test-label="User Name">
-  */
-  this.Then(/^The input "([^"]*)" has value "([^"]*)"$/, function(labelName, value, callback){
-    var selectedElement = element(by.css("input[data-test-label='" + labelName + "']"));
-
-    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).and.notify(callback);
-  });
-
-  /*
-  ** Check if a textarea, identified by a label, contains a given value.
-  ** IMPORTANT: the label must be equal to the field data-test-label of the text area.
-  ** Es.
-  ** <label>User Description</label>
-  ** <textarea data-test-label="User Description"></textarea>
-  */
-  this.Then(/^The textarea "([^"]*)" has value "([^"]*)"$/, function(labelName, value, callback){
-    var selectedElement = element(by.css("textarea[data-test-label='" + labelName + "']"));
-
-    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
+    expect(selectedElement.isPresent()).to.eventually.equal(true, "This text is not present in page").and.notify(callback);    
 
   });
-
-  /*
-  ** Check if an option from a select box is checked. The select box is selected using the label
-  ** IMPORTANT: the label must be equal to the field data-test-label of the select.
-  ** Es.
-  ** <label>Chose one</label>
-  ** <select data-test-label="Chose one"></select>
-  */
-  this.Then(/^The select "([^"]*)" has value "([^"]*)"$/, function(labelName, value, callback){
-    var selectedElement = element(by.css("select[data-test-label='" + labelName + "']" + ' option:first-child'));
-    
-    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
-  });
-
 
   /*
   ** Check if an elementi IS present in a page. This element is identified by a CSS selector
@@ -305,6 +430,103 @@ module.exports = function() {
     expect(elementsFound).to.be.at.least(parseInt(numElements)).and.notify(callback);
   });
 
+  /*
+  ** Check if an img specified by a CSS selector contains a given url 
+  */
+  this.Then(/^The img tag with selector "([^"]*)" contains the image "([^"]*)"$/, function(elementSelector, imageUrl, callback){
+    var selectedElement = element(by.css(elementSelector));
 
+    expect(selectedElement.getAttribute("src")).to.eventually.equal(imageUrl).and.notify(callback);
+  });
+
+
+//--------------------- TEST ---------------------//
+
+this.Then(/^I move to "([^"]*)"$/, function(newUrl, callback){
+  //mi aspetto che l'url sia uguale
+    browser.driver.wait(function() {
+      return browser.getCurrentUrl().then(function (url) {
+                return url === newUrl;
+            }); 
+    }, 10000, "ERROREEEE!!");
+
+    callback();
+});
+
+
+
+  this.Then(/Bonera landing fail/, function(){
+    //vado sulla pagina
+    //browser.driver.get("http://193.41.235.54/it/landing/11/2015/bmw-dinamica-ti-regala-chagall");
+
+    //mi accerto che esista il pulstante
+    var loginButtonExists = by.id('edit-submit');            
+    browser.driver.wait(function() {
+      return browser.driver.isElementPresent(loginButtonExists); 
+    }, 5000);
+
+    //trovo il pulsante e ci clicco sopra
+    var loginButton = element(by.id('edit-submit'));
+    browser.actions().mouseMove(loginButton).click();
+
+    //mi aspetto che l'url sia uguale
+    browser.driver.wait(function() {
+      return browser.getCurrentUrl().then(function (url) {
+                return url === "http://193.41.235.54/it/landing/11/2015/bmw-dinamica-ti-regala-chagall";
+            }); 
+    }, 10000, "ERROREEEE!!");
+
+  });
+
+
+  this.Then(/Bonera landing success/, function(){
+    //vado sulla pagina
+    //browser.driver.get("http://193.41.235.54/it/landing/11/2015/bmw-dinamica-ti-regala-chagall");
+
+
+    function test(){
+      document.getElementById("edit-submitted-checkbox-1").checked;
+      document.getElementById("edit-submitted-giorno").value = "22-1-2016";
+    }
+
+    browser.executeScript(test);
+
+    browser.driver.wait(function(){}, 10000);
+
+    //mi accerto che esista il pulstante
+    var loginButtonExists = by.id('edit-submit');            
+    browser.driver.wait(function() {
+      return browser.driver.isElementPresent(loginButtonExists); 
+    }, 5000);
+
+    //trovo il pulsante e ci clicco sopra
+    var loginButton = element(by.id('edit-submit'));
+    browser.actions().mouseMove(loginButton).click();
+
+    //mi aspetto che l'url sia uguale
+    browser.driver.wait(function() {
+      return browser.getCurrentUrl().then(function (url) {
+                return url !== "http://193.41.235.54/it/landing/11/2015/bmw-dinamica-ti-regala-chagall";
+            }); 
+    }, 10000, "ERROREEEE!!");
+
+  });
+
+
+function waitForUrlToChangeTo(urlRegex) {
+    var currentUrl;
+
+    return browser.getCurrentUrl().then(function storeCurrentUrl(url) {
+            currentUrl = url;
+        }
+    ).then(function waitForUrlToChangeTo() {
+            return browser.wait(function waitForUrlToChangeTo() {
+                return browser.getCurrentUrl().then(function compareCurrentUrl(url) {
+                    return urlRegex.test(url);
+                });
+            });
+        }
+    );
+}
   
 };
