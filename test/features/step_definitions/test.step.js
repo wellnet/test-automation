@@ -25,13 +25,7 @@ module.exports = function() {
   this.Given(/^I go on "([^"]*)"$/, function(url, callback){
     browser.get(url);
 
-    browser.driver.wait(function() {
-      return browser.getCurrentUrl().then(function (currentUrl) {
-                return currentUrl === url;
-            }); 
-    }, 10000, "ERROREEEE!!");
-
-    callback();
+    expect(browser.getCurrentUrl()).to.eventually.equal(url).notify(callback);
   });
 
 /*---------------- FUNCTION USED TO CLICK ON ELEMENTS ELEMENTS -----------------------------*/
@@ -55,6 +49,9 @@ module.exports = function() {
   });
 
 
+  /*
+  ** Click on a link with a particular text
+  */
   this.When(/^I click on the link "([^"]*)"$/, function(myText, callback){
 
     var selectedElement = element(by.cssContainingText("a", myText));    
@@ -108,7 +105,9 @@ module.exports = function() {
   this.Then(/The value of input with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).and.notify(callback);
+    expect(selectedElement.getAttribute("value")).to.eventually.equal(value);
+
+    callback();
 
   });
 
@@ -118,7 +117,10 @@ module.exports = function() {
   this.Then(/The value of input with label "([^"]*)" should be "([^"]*)"/, function(labelName, value, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
 
-    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).and.notify(callback);
+    expect(selectedElement.getAttribute("value")).to.eventually.equal(value);
+
+    callback();
+
 
   });
 
@@ -128,7 +130,9 @@ module.exports = function() {
   this.Then(/The input with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
+
+    callback();
   });
 
   /*
@@ -137,7 +141,9 @@ module.exports = function() {
   this.Then(/The input with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
+
+    callback();
 
   });
 
@@ -183,7 +189,9 @@ module.exports = function() {
   this.Then(/The text of the textarea with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
+    expect(selectedElement.getText()).to.eventually.equal(value);
+
+    callback();
 
   });
 
@@ -193,7 +201,9 @@ module.exports = function() {
   this.Then(/The text of the textarea with label "([^"]*)" should be "([^"]*)"/, function(labelName, value, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
 
-    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
+    expect(selectedElement.getText()).to.eventually.equal(value);
+
+    callback();
 
   });
 
@@ -203,7 +213,9 @@ module.exports = function() {
   this.Then(/The textarea with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
+
+    callback();
   });
 
   /*
@@ -212,7 +224,9 @@ module.exports = function() {
   this.Then(/The textarea with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
+
+    callback();
 
   });
 
@@ -245,7 +259,9 @@ module.exports = function() {
   this.Then(/^The value of the select with selector "([^"]*)" should be "([^"]*)"$/, function(elementSelector, value, callback){
     var selectedElement = element(by.css(elementSelector + ' option:first-child'));
     
-    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
+    expect(selectedElement.getText()).to.eventually.equal(value);
+
+    callback();
   });
 
   /*
@@ -254,7 +270,9 @@ module.exports = function() {
   this.Then(/^The value of the select with label "([^"]*)" should be "([^"]*)"$/, function(labelName, value, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select"));
     
-    expect(selectedElement.getText()).to.eventually.equal(value).and.notify(callback);
+    expect(selectedElement.getText()).to.eventually.equal(value);
+    
+    callback();
   });
 
   /*
@@ -278,7 +296,9 @@ module.exports = function() {
   this.Then(/The select with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
+    
+    callback();
   });
 
   /*
@@ -287,7 +307,9 @@ module.exports = function() {
   this.Then(/The select with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select"));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).and.notify(callback);
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
+    
+    callback();
 
   });
 
@@ -309,7 +331,9 @@ module.exports = function() {
   this.Then(/^The radio button with label "([^"]*)" should be checked$/, function(labelName, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/preceding-sibling::input[1]"));
 
-    expect(selectedElement.getAttribute("checked")).to.eventually.equal("true").and.notify(callback);
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal("true");
+    
+    callback();
   });
 
   /*
@@ -318,7 +342,9 @@ module.exports = function() {
   this.Then(/^The radio button with label "([^"]*)" should not be checked$/, function(labelName, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/preceding-sibling::input[1]"));
 
-    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null).and.notify(callback);
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null);
+    
+    callback();
   });
 
   /*
@@ -327,7 +353,9 @@ module.exports = function() {
   this.Then(/^The radio button with selector "([^"]*)" should be checked$/, function(elementSelector, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("checked")).to.eventually.equal("true").and.notify(callback);
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal("true");
+    
+    callback();
   });
 
   /*
@@ -336,7 +364,9 @@ module.exports = function() {
   this.Then(/^The radio button with selector "([^"]*)" should not be checked$/, function(elementSelector, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null).and.notify(callback);
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null);
+    
+    callback();
   });
 
   ///CHECKBOXES-----
@@ -365,27 +395,35 @@ module.exports = function() {
   ** Check if the url of this page is equal to myUrl
   */
   this.Then(/^The url of the page should be "([^"]*)"$/, function(myUrl, callback){
-    expect(browser.getCurrentUrl()).to.eventually.equal(myUrl);
+    expect(browser.getCurrentUrl()).to.eventually.equal(myUrl).notify(callback);
+  });
 
-    callback();
+  /*
+  ** Check if the url of this page is not equal to myUrl
+  */
+  this.Then(/^The url of the page should not be "([^"]*)"$/, function(myUrl, callback){
+    expect(browser.getCurrentUrl()).to.eventually.not.equal(myUrl).notify(callback);
   });
 
   /*
   ** Check if the url of this page contains myString
   */
   this.Then(/^The url of the page contains "([^"]*)"$/, function(myString, callback){
-    expect(browser.getCurrentUrl()).to.eventually.have.string(myString);
+    expect(browser.getCurrentUrl()).to.eventually.have.string(myString).notify(callback);
+  });
 
-    callback();
+  /*
+  ** Check if the url of this page does not contain myString
+  */
+  this.Then(/^The url of the page does not contain "([^"]*)"$/, function(myString, callback){
+    expect(browser.getCurrentUrl()).to.eventually.not.have.string(myString).notify(callback);
   });
 
   /*
   ** Check if the title of this page contains is equal to myTitle
   */
   this.Then(/^The title of the page should be "([^"]*)"$/, function(myTitle, callback){
-    expect(browser.getTitle()).to.eventually.equal(myTitle);
-
-    callback();
+    expect(browser.getTitle()).to.eventually.equal(myTitle).notify(callback);
   });
 
 
@@ -395,10 +433,7 @@ module.exports = function() {
   this.Then(/^The text of the element with selector "([^"]*)" should be "([^"]*)"$/, function(elementSelector, myText, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getText()).to.eventually.equal(myText);
-
-    callback();
-
+    expect(selectedElement.getText()).to.eventually.equal(myText).notify(callback);
   });
 
   /*
@@ -408,10 +443,7 @@ module.exports = function() {
 
     var selectedElement = element(by.xpath("//*[contains(., '" + myText + "')]"));
     
-    expect(selectedElement.isPresent()).to.eventually.equal(true, "This text is not present in page");
-
-    callback();
-
+    expect(selectedElement.isPresent()).to.eventually.equal(true, "This text is not present in page").notify(callback);
   });
 
   /*
@@ -421,35 +453,29 @@ module.exports = function() {
 
     var selectedElement = element(by.xpath("//*[contains(., '" + myText + "')]"));
     
-    expect(selectedElement.isPresent()).to.eventually.equal(false, "This text is present in page");
-
-    callback();    
-
+    expect(selectedElement.isPresent()).to.eventually.equal(false, "This text is present in page").notify(callback);
   });
 
   /*
-  ** Check if a given link does IS present in the page
+  ** Check if a link with a given name IS present in the page
   */
   this.Then(/^The link "([^"]*)" should be present$/, function(myText, callback){
 
     var selectedElement = element(by.cssContainingText("a", myText));    
     
-    expect(selectedElement.isPresent()).to.eventually.equal(true, "This link is not present in page");
-
-    callback();    
+    expect(selectedElement.isPresent()).to.eventually.equal(true, "This link is not present in page").notify(callback);
+    
 
   });
 
   /*
-  ** Check if a given link does IS NOT present in the page
+  ** Check if a link with a given name IS NOT present in the page
   */
   this.Then(/^The link "([^"]*)" should not be present$/, function(myText, callback){
 
     var selectedElement = element(by.cssContainingText("a", myText));    
     
-    expect(selectedElement.isPresent()).to.eventually.equal(false, "This link is present in page");
-
-    callback();
+    expect(selectedElement.isPresent()).to.eventually.equal(false, "This link is present in page").notify(callback);
 
   });
 
@@ -459,9 +485,7 @@ module.exports = function() {
   this.Then(/The element with selector "([^"]*)" should be present/, function(elementSelector, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.isPresent()).to.eventually.equal(true, "Can't find the element with selector '" + elementSelector + "' that should be present");
-
-    callback();
+    expect(selectedElement.isPresent()).to.eventually.equal(true, "Can't find the element with selector '" + elementSelector + "' that should be present").notify(callback);
   });
 
   /*
@@ -470,9 +494,7 @@ module.exports = function() {
   this.Then(/The element with selector "([^"]*)" should not be present/, function(elementSelector, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.isPresent()).to.eventually.equal(false, "The element with selector '" + elementSelector + "' should not be present but appears");
-
-    callback();
+    expect(selectedElement.isPresent()).to.eventually.equal(false, "The element with selector '" + elementSelector + "' should not be present but appears").notify(callback);
   });
 
   /*
@@ -482,9 +504,7 @@ module.exports = function() {
     var selectedElements = element.all(by.css(elementSelector));
     var elementsFound = selectedElements.count();
 
-    expect(elementsFound).to.eventually.equal(parseInt(numElements), "Can't find exactly" + numElements + " elements with selector '" + elementSelector + "'");
-
-    callback();
+    expect(elementsFound).to.eventually.equal(parseInt(numElements), "Can't find exactly" + numElements + " elements with selector '" + elementSelector + "'").notify(callback);
   });
 
   /*
@@ -494,9 +514,7 @@ module.exports = function() {
     var selectedElements = element.all(by.css(elementSelector));
     var elementsFound = selectedElements.count();
 
-    expect(elementsFound).to.be.at.least(parseInt(numElements));
-
-    callback();
+    expect(elementsFound).to.be.at.least(parseInt(numElements)).notify(callback);
   });
 
   /*
@@ -505,9 +523,7 @@ module.exports = function() {
   this.Then(/^The img tag with selector "([^"]*)" contains the image "([^"]*)"$/, function(elementSelector, imageUrl, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("src")).to.eventually.equal(imageUrl);
-
-    callback();
+    expect(selectedElement.getAttribute("src")).to.eventually.equal(imageUrl).notify(callback);
   });
 
 
@@ -522,6 +538,24 @@ module.exports = function() {
     }, 10000, "ERROREEEE!!");
 
     callback();
+  });
+
+
+  this.Given(/^some precondition$/, function (callback) {
+    //expect(true).to.equal(true);
+    
+    var var1 = "a";
+    var var2 = "b";
+
+
+
+    if(var1 !== var2){
+      callback();
+    } else{
+      callback(new Error("Error!"));
+    }
+
+    //callback();
   });
 
   
