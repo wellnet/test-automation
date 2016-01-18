@@ -6,12 +6,18 @@ var chai = require('chai'),
 
 chai.use(chaiAsPromised);
 
+
 var expect = chai.expect;
 
 // Protractor won't wait for Angular
 browser.ignoreSynchronization = true;
 
+
+var errorPage = browser.get("http://www.gwgwdvw.com");
+
+
 module.exports = function() {
+
   
   this.World = require('../support/world').World;
 
@@ -23,9 +29,24 @@ module.exports = function() {
   ** Ex. https://www.google.com
   */
   this.Given(/^I go on "([^"]*)"$/, function(url, callback){
-    browser.get(url);
 
+    browser.get(url);
     expect(browser.getCurrentUrl()).to.eventually.equal(url).notify(callback);
+
+  });
+
+  /*
+  ** Check if I'm on a page with a given url
+  */
+  this.Then(/^I'm on "([^"]*)"$/, function(newUrl, callback){
+  //mi aspetto che l'url sia uguale
+    browser.driver.wait(function() {
+      return browser.getCurrentUrl().then(function (url) {
+                return url === newUrl;
+            }); 
+    }, 10000, "ERROREEEE!!");
+
+    callback();
   });
 
 /*---------------- FUNCTION USED TO CLICK ON ELEMENTS ELEMENTS -----------------------------*/
@@ -105,9 +126,7 @@ module.exports = function() {
   this.Then(/The value of input with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("value")).to.eventually.equal(value);
-
-    callback();
+    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).notify(callback);
 
   });
 
@@ -117,10 +136,7 @@ module.exports = function() {
   this.Then(/The value of input with label "([^"]*)" should be "([^"]*)"/, function(labelName, value, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
 
-    expect(selectedElement.getAttribute("value")).to.eventually.equal(value);
-
-    callback();
-
+    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).notify(callback);
 
   });
 
@@ -130,23 +146,39 @@ module.exports = function() {
   this.Then(/The input with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
-
-    callback();
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).notify(callback);
   });
 
   /*
-  ** Check if the value of input, identified by a label, has a given class
+  ** Check if the input, identified by a label, has a given class
   */
   this.Then(/The input with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
-
-    callback();
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).notify(callback);
 
   });
 
+  /*
+  ** Check if the input, identified by a CSS selector, hasn't a given class
+  */
+  this.Then(/The input with selector "([^"]*)" shouldn't have "([^"]*)" as class/, function(elementSelector, className, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.not.have.string(className).notify(callback);
+  });
+
+  /*
+  ** Check if the input, identified by a label, hasn't a given class
+  */
+  this.Then(/The input with label "([^"]*)" shouldn't have "([^"]*)" as class/, function(labelName, className, callback){
+    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.not.have.string(className).notify(callback);
+
+  });
+
+  
 
 
   ///TEXTAREA-----
@@ -189,9 +221,7 @@ module.exports = function() {
   this.Then(/The text of the textarea with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getText()).to.eventually.equal(value);
-
-    callback();
+    expect(selectedElement.getText()).to.eventually.equal(value).notify(callback);
 
   });
 
@@ -201,9 +231,7 @@ module.exports = function() {
   this.Then(/The text of the textarea with label "([^"]*)" should be "([^"]*)"/, function(labelName, value, callback){
     var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
 
-    expect(selectedElement.getText()).to.eventually.equal(value);
-
-    callback();
+    expect(selectedElement.getText()).to.eventually.equal(value).notify(callback);
 
   });
 
@@ -431,6 +459,7 @@ module.exports = function() {
   ** Check if the text of the element with a given selector is equal to myText.
   */
   this.Then(/^The text of the element with selector "([^"]*)" should be "([^"]*)"$/, function(elementSelector, myText, callback){
+    
     var selectedElement = element(by.css(elementSelector));
 
     expect(selectedElement.getText()).to.eventually.equal(myText).notify(callback);
@@ -529,34 +558,18 @@ module.exports = function() {
 
 //--------------------- TEST ---------------------//
 
-  this.Then(/^I move to "([^"]*)"$/, function(newUrl, callback){
-  //mi aspetto che l'url sia uguale
-    browser.driver.wait(function() {
-      return browser.getCurrentUrl().then(function (url) {
-                return url === newUrl;
-            }); 
-    }, 10000, "ERROREEEE!!");
+//non faccio nulla e il browser si ferma a debbuggare, studiare browser.stop() per il debug
+this.Then(/I stop here/, function(callback){
 
-    callback();
-  });
+});  
 
 
-  this.Given(/^some precondition$/, function (callback) {
-    //expect(true).to.equal(true);
-    
-    var var1 = "a";
-    var var2 = "b";
+this.Then(/I stop here for (d+) seconds/, function(seconds, callback){
+  var timeToSleep = seconds * 1000;
+  browser.sleep(timeToSleep);
+  callback();
+});  
 
-
-
-    if(var1 !== var2){
-      callback();
-    } else{
-      callback(new Error("Error!"));
-    }
-
-    //callback();
-  });
 
   
 };
