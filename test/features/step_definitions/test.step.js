@@ -101,7 +101,7 @@ module.exports = function() {
   ** Fill a input using a given label. 
   */
   this.When(/I fill the input with label "([^"]*)" with value "([^"]*)"/, function(labelName, value, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::input[1]"));
 
     selectedElement.clear().sendKeys(value);
 
@@ -113,7 +113,7 @@ module.exports = function() {
   ** Same as the previous but used for Scenario Outline
   */
   this.When(/^I fill the input (.*) with value (.*) using table$/, function(labelName, value, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::input[1]"));
 
     selectedElement.clear().sendKeys(value);
 
@@ -134,7 +134,7 @@ module.exports = function() {
   ** Check if the value of input, identified by a label, is equal to a given value
   */
   this.Then(/The value of input with label "([^"]*)" should be "([^"]*)"/, function(labelName, value, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::input[1]"));
 
     expect(selectedElement.getAttribute("value")).to.eventually.equal(value).notify(callback);
 
@@ -153,7 +153,7 @@ module.exports = function() {
   ** Check if the input, identified by a label, has a given class
   */
   this.Then(/The input with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::input[1]"));
 
     expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).notify(callback);
 
@@ -162,7 +162,7 @@ module.exports = function() {
   /*
   ** Check if the input, identified by a CSS selector, hasn't a given class
   */
-  this.Then(/The input with selector "([^"]*)" shouldn't have "([^"]*)" as class/, function(elementSelector, className, callback){
+  this.Then(/The input with selector "([^"]*)" should not have "([^"]*)" as class/, function(elementSelector, className, callback){
     var selectedElement = element(by.css(elementSelector));
 
     expect(selectedElement.getAttribute("class")).to.eventually.not.have.string(className).notify(callback);
@@ -171,8 +171,8 @@ module.exports = function() {
   /*
   ** Check if the input, identified by a label, hasn't a given class
   */
-  this.Then(/The input with label "([^"]*)" shouldn't have "([^"]*)" as class/, function(labelName, className, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::input"));
+  this.Then(/The input with label "([^"]*)" should not have "([^"]*)" as class/, function(labelName, className, callback){
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::input[1]"));
 
     expect(selectedElement.getAttribute("class")).to.eventually.not.have.string(className).notify(callback);
 
@@ -185,7 +185,7 @@ module.exports = function() {
   /*
   ** Fill a text area identified by a CSS selector
   */
-  this.When(/^I fill text area with selector "([^"]*)" with value "([^"]*)"$/, function(elementSelector, value, callback){
+  this.When(/^I fill the textarea with selector "([^"]*)" with value "([^"]*)"$/, function(elementSelector, value, callback){
     var selectedElement = element(by.css(elementSelector));
 
     selectedElement.clear().sendKeys(value);
@@ -197,7 +197,7 @@ module.exports = function() {
   ** Fill a text area using a given label. 
   */
   this.When(/^I fill the textarea with label "([^"]*)" with value "([^"]*)"$/, function(labelName, value, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::textarea[1]"));
 
     selectedElement.clear().sendKeys(value);
 
@@ -208,7 +208,7 @@ module.exports = function() {
   ** Same as the previous but used for Scenario Outline
   */
   this.When(/^I fill the textarea (.*) with value (.*) using table$/, function(labelName, value, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::textarea[1]"));
 
     selectedElement.clear().sendKeys(value);
 
@@ -221,7 +221,7 @@ module.exports = function() {
   this.Then(/The text of the textarea with selector "([^"]*)" should be "([^"]*)"/, function(elementSelector, value, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getText()).to.eventually.equal(value).notify(callback);
+    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).notify(callback);
 
   });
 
@@ -229,9 +229,9 @@ module.exports = function() {
   ** Check if the text of textarea, identified by a label, is equal to a given value
   */
   this.Then(/The text of the textarea with label "([^"]*)" should be "([^"]*)"/, function(labelName, value, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::textarea[1]"));
 
-    expect(selectedElement.getText()).to.eventually.equal(value).notify(callback);
+    expect(selectedElement.getAttribute("value")).to.eventually.equal(value).notify(callback);
 
   });
 
@@ -241,20 +241,36 @@ module.exports = function() {
   this.Then(/The textarea with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).notify(callback);
 
-    callback();
+  });
+
+  /*
+  ** Check if the textarea, identified by a CSS selector, hasn't a given class
+  */
+  this.Then(/The textarea with selector "([^"]*)" should not have "([^"]*)" as class/, function(elementSelector, className, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.not.have.string(className).notify(callback);
+
   });
 
   /*
   ** Check if the textarea, identified by a label, has a given class
   */
   this.Then(/The textarea with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::textarea"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::textarea[1]"));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).notify(callback);
+  });
 
-    callback();
+  /*
+  ** Check if the textarea, identified by a label, hasn't a given class
+  */
+  this.Then(/The textarea with label "([^"]*)" should not have "([^"]*)" as class/, function(labelName, className, callback){
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::textarea[1]"));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.not.have.string(className).notify(callback);
 
   });
 
@@ -274,8 +290,8 @@ module.exports = function() {
   ** Choose an option from a select box using a given label
   */
   this.When(/^I check "([^"]*)" from select box with label "([^"]*)"$/, function(chosenElement, labelName, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select/option[. = '" + chosenElement + "']"));
-    
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::select/option[. = '" + chosenElement + "']"));
+
     selectedElement.click();
 
     callback();
@@ -285,22 +301,36 @@ module.exports = function() {
   ** Check if the value of the select, identified by a CSS selector, is equal to a given value
   */
   this.Then(/^The value of the select with selector "([^"]*)" should be "([^"]*)"$/, function(elementSelector, value, callback){
-    var selectedElement = element(by.css(elementSelector + ' option:first-child'));
+    var selectedElement = element(by.css(elementSelector + ' option:checked'));
     
-    expect(selectedElement.getText()).to.eventually.equal(value);
+    expect(selectedElement.getText()).to.eventually.equal(value).notify(callback);
+  });
 
-    callback();
+  /*
+  ** Check if the value of the select, identified by a CSS selector, is not equal to a given value
+  */
+  this.Then(/^The value of the select with selector "([^"]*)" should not be "([^"]*)"$/, function(elementSelector, value, callback){
+    var selectedElement = element(by.css(elementSelector + ' option:checked'));
+    
+    expect(selectedElement.getText()).to.eventually.not.equal(value).notify(callback);
   });
 
   /*
   ** Check if the value of the select, identified by a label, is equal to a given value
   */
   this.Then(/^The value of the select with label "([^"]*)" should be "([^"]*)"$/, function(labelName, value, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::select[1]"));
     
-    expect(selectedElement.getText()).to.eventually.equal(value);
+    expect(selectedElement.$('option:checked').getText()).to.eventually.equal(value).notify(callback);
+  });
+
+  /*
+  ** Check if the value of the select, identified by a label, is not equal to a given value
+  */
+  this.Then(/^The value of the select with label "([^"]*)" should not be "([^"]*)"$/, function(labelName, value, callback){
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::select[1]"));
     
-    callback();
+    expect(selectedElement.$('option:checked').getText()).to.eventually.not.equal(value).notify(callback);
   });
 
   /*
@@ -309,12 +339,14 @@ module.exports = function() {
   this.Then(/^The select with label "([^"]*)" should have these options "([^"]*)"$/, function(labelName, optionsList, callback){
     
     var selectedElement
-    var elements = optionsList.split("&");
+    /* 
+    Sostituisco il carattere & con \n perchè la funzione getText() usata dopo ritorna una stringa con tutte le opzioni
+    separate da uno \n
+    */
+    var elements = optionsList.replace(/&/g, "\n");
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::select[1]"));
 
-    for(var i = 0 ; i < elements.length ; i++){
-      selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select/option[text() = '" + elements[i] + "']"));
-      expect(selectedElement.isPresent()).to.eventually.equal(true, "'" + elements[i] + "' is not an option.");
-    }
+    expect(selectedElement.getText()).to.eventually.equal(elements).notify(callback);
     
   });
 
@@ -324,21 +356,35 @@ module.exports = function() {
   this.Then(/The select with selector "([^"]*)" should have "([^"]*)" as class/, function(elementSelector, className, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
-    
-    callback();
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).notify(callback);
   });
+
+  /*
+  ** Check if the select, identified by a CSS selector, hasn't a given class
+  */
+  this.Then(/The select with selector "([^"]*)" should not have "([^"]*)" as class/, function(elementSelector, className, callback){
+    var selectedElement = element(by.css(elementSelector));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.not.have.string(className).notify(callback);
+  });
+
 
   /*
   ** Check if the select, identified by a label, has a given class
   */
   this.Then(/The select with label "([^"]*)" should have "([^"]*)" as class/, function(labelName, className, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/following-sibling::select"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::select[1]"));
 
-    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className);
-    
-    callback();
+    expect(selectedElement.getAttribute("class")).to.eventually.have.string(className).notify(callback);
+  });
 
+  /*
+  ** Check if the select, identified by a label, hasn't a given class
+  */
+  this.Then(/The select with label "([^"]*)" should not have "([^"]*)" as class/, function(labelName, className, callback){
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/following-sibling::select[1]"));
+
+    expect(selectedElement.getAttribute("class")).to.eventually.not.have.string(className).notify(callback);
   });
 
   ///RADIO BUTTON-----
@@ -346,7 +392,7 @@ module.exports = function() {
   ** Choose an option from a radio button list using a given label
   */
   this.When(/^I check the radio button with label "([^"]*)"$/, function(labelName, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]"));
     
     selectedElement.click();
 
@@ -354,25 +400,34 @@ module.exports = function() {
   });
 
   /*
+  ** Choose an option from a radio button list using a CSS selector
+  */
+  this.When(/^I check the radio button with selector "([^"]*)"$/, function(elementSelector, callback){
+    var selectedElement = element(by.css(elementSelector));
+    
+    selectedElement.click();
+
+    callback();
+  });
+
+
+  /*
   ** Check if the radio button with a given label is checked
   */
   this.Then(/^The radio button with label "([^"]*)" should be checked$/, function(labelName, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/preceding-sibling::input[1]"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/preceding-sibling::input[1]"));
 
-    expect(selectedElement.getAttribute("checked")).to.eventually.equal("true");
-    
-    callback();
+    expect(selectedElement.isSelected()).to.eventually.equal(true).notify(callback);
   });
 
   /*
   ** Check if the radio button with a given label is NOT checked
   */
   this.Then(/^The radio button with label "([^"]*)" should not be checked$/, function(labelName, callback){
-    var selectedElement = element(by.xpath("//label[. = '" + labelName + "']/preceding-sibling::input[1]"));
+    var selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + labelName + "']]/preceding-sibling::input[1]"));
 
-    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null);
-    
-    callback();
+
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null).notify(callback);
   });
 
   /*
@@ -381,9 +436,7 @@ module.exports = function() {
   this.Then(/^The radio button with selector "([^"]*)" should be checked$/, function(elementSelector, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("checked")).to.eventually.equal("true");
-    
-    callback();
+    expect(selectedElement.isSelected()).to.eventually.equal(true).notify(callback);
   });
 
   /*
@@ -392,9 +445,7 @@ module.exports = function() {
   this.Then(/^The radio button with selector "([^"]*)" should not be checked$/, function(elementSelector, callback){
     var selectedElement = element(by.css(elementSelector));
 
-    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null);
-    
-    callback();
+    expect(selectedElement.getAttribute("checked")).to.eventually.equal(null).notify(callback);
   });
 
   ///CHECKBOXES-----
@@ -402,12 +453,29 @@ module.exports = function() {
   ** Choose one or more options from a checkbox list. Use "&" as separator in chosenElements.
   ** Es: "element1&element2&element3"
   */
-  this.When(/^I check the checkboxes "([^"]*)"$/, function(checkboxList, callback){
+  this.When(/^I check the checkboxes with labels "([^"]*)"$/, function(checkboxList, callback){
     var selectedElement;
     var elements = checkboxList.split("&");    
 
     for(var i = 0 ; i < elements.length ; i++){
-      selectedElement = element(by.xpath("//label[. = '" + elements[i] + "']"));
+      selectedElement = element(by.xpath("//label[text()[normalize-space() = '" + elements[i] + "']]/preceding-sibling::input[1]"));
+
+      selectedElement.click();
+    }
+
+    callback();
+  });
+
+  /*
+  ** Choose one or more options from a checkbox list. Use "&" as separator in chosenElements.
+  ** Es: "#element1&.element2&element3"
+  */
+  this.When(/^I check the checkboxes with selectors "([^"]*)"$/, function(checkboxList, callback){
+    var selectedElement;
+    var elements = checkboxList.split("&");    
+
+    for(var i = 0 ; i < elements.length ; i++){
+      selectedElement = element(by.css(elements[i]));
     
       selectedElement.click();
     }
@@ -563,7 +631,7 @@ this.Then(/I stop here/, function(callback){
 
 });  
 
-
+//non so se funziona
 this.Then(/I stop here for (d+) seconds/, function(seconds, callback){
   var timeToSleep = seconds * 1000;
   browser.sleep(timeToSleep);
