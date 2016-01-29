@@ -1,0 +1,76 @@
+<html>
+<head>
+
+	<title>Prima pagina</title>
+
+</head>
+<body>
+		
+	<form>
+
+		<label for="name">Name</label>:
+		<input type="text" id="name">
+
+		<br>
+		
+		<label for="lastname">Lastname</label>:
+		<input type="text" id="lastname">
+		
+		<br>
+
+		<label for="address">Address</label>:
+		<input type="text" id="address" class="required">
+
+		<br>
+
+		<label for="email">Email</label>:
+		<input type="text" id="email" class="error-message required" value="emanuele.giarlini@gmail.com">
+
+		<br>
+
+		<label for="description">Description</label>:
+		<textarea type="text" id="description" class="error-message required"></textarea>
+
+		<br>
+
+		<label for="hobbies">  Hobbies</label>:
+		<textarea type="text" id="hobbies" class="required"></textarea>
+
+		<br>
+
+		<label for="age"> Age </label>:
+		<select id="age" class="error-message required">
+			<option value="18-24">18 - 24</option>
+			<option value="25-34">25 - 34</option>
+			<option value="35+">35+</option>
+		</select>
+
+		<br>
+
+		<label for="country"> Country</label>:
+		<select id="country" class="required">
+			<option value="italy">Italy</option>
+			<option value="uk">United Kingdom</option>
+			<option value="germany">Germany</option>
+			<option value="france">France</option>
+		</select>
+
+		<br>
+
+		<input type="radio" name="group1" id="male" value="1" /><label for="male"> Male</label>
+		<input type="radio" name="group1" id="female" value="1" /><label for="female"> Female </label>
+
+
+		<br>
+
+		<input type="checkbox" name="group1" id="december" value="1" /><label for="december"> December  </label>
+		<input type="checkbox" name="group1" id="june" value="1" /><label for="june"> June</label>
+		<input type="checkbox" name="group1" id="may" value="1" /><label for="may">  May</label>
+		<input type="checkbox" name="group1" id="october" value="1" /><label for="october">October</label>
+
+
+
+	</form>
+
+</body>
+</html>
